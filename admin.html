@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Farm2Market</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="dashboard" class="admin-container">
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1><i data-lucide="user"></i> <span>Admin Panel</span></h1>
+            </div>
+            <div class="sidebar-menu">
+                <div class="sidebar-menu-item active" onclick="showView('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('orders')">
+                    <i data-lucide="shopping-cart"></i>
+                    <span>Orders</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('deliveryAgents')">
+                    <i data-lucide="truck"></i>
+                    <span>Delivery Agents</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('agriSpecialists')">
+                    <i data-lucide="leaf"></i>
+                    <span>Agri Specialists</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('farmerApprovals')">
+                    <i data-lucide="user-check"></i>
+                    <span>Farmer Approvals</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('productApprovals')">
+                    <i data-lucide="package"></i>
+                    <span>Product Approvals</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('payments')">
+                    <i data-lucide="credit-card"></i>
+                    <span>Payments</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('deliveryMonitoring')">
+                    <i data-lucide="activity"></i>
+                    <span>Monitoring</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('reports')">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span>Activity Logs</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('settings')">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="logout()">
+                    <i data-lucide="log-out"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+
+            <div class="header">
+                <div class="header-title">
+                    <h2 id="pageTitle">Admin Dashboard</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="showNotifications()">
+                        <i data-lucide="bell"></i>
+                    </button>
+                    <div class="user-profile" onclick="showProfile()">
+                        <div class="user-avatar" id="userAvatar">AD</div>
+                        <span id="userName">Admin User</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+
+                <div id="dashboardView">
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statTotalOrders">--</div>
+                                    <div class="stat-label">Total Orders</div>
+                                </div>
+                                <div class="stat-icon orders">
+                                    <i data-lucide="shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statTotalRevenue">--</div>
+                                    <div class="stat-label">Total Revenue</div>
+                                </div>
+                                <div class="stat-icon revenue">
+                                    <i data-lucide="dollar-sign"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statPendingCount">--</div>
+                                    <div class="stat-label">Pending Orders</div>
+                                </div>
+                                <div class="stat-icon sales">
+                                    <i data-lucide="clock"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statAvgOrderValue">--</div>
+                                    <div class="stat-label">Avg. Order Value</div>
+                                </div>
+                                <div class="stat-icon users">
+                                    <i data-lucide="trending-up"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Recent Orders</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading orders...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="ordersView" style="display: none;">
+                    <h3 class="section-title">Order Management</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Extracted Order Data</div>
+                            <div class="chart-filters">
+                                <div class="chart-filter active" onclick="loadOrders('all')">All</div>
+                                <div class="chart-filter" onclick="loadOrders('pending')">Pending</div>
+                                <div class="chart-filter" onclick="loadOrders('confirmed')">Confirmed</div>
+                                <div class="chart-filter" onclick="loadOrders('shipped')">Shipped</div>
+                                <div class="chart-filter" onclick="loadOrders('delivered')">Delivered</div>
+                            </div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allOrdersBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading orders from database...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="deliveryAgentsView" style="display: none;">
+                    <h3 class="section-title">Delivery Agent Registry</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Registered Agents</div>
+                            <button class="btn btn-primary btn-sm" onclick="showAddAgentModal()">+ Register New</button>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Vehicle</th>
+                                    <th>Phone</th>
+                                    <th>Rating</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deliveryAgentsBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading agents from database...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="agriSpecialistsView" style="display: none;">
+                    <h3 class="section-title">Agriculture Specialist Registry</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Registered Specialists</div>
+                            <button class="btn btn-primary btn-sm" onclick="showAddSpecialistModal()">+ Register New</button>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Qualification</th>
+                                    <th>Region</th>
+                                    <th>Phone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="agriSpecialistsBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading specialists from database...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="productApprovalsView" style="display: none;">
+                    <h3 class="section-title">Product Quality Approval</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Pending Product Submissions</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Product</th>
+                                    <th>Owner</th>
+                                    <th>Type</th>
+                                    <th>Price/Kg</th>
+                                    <th>Stock</th>
+                                    <th>Image</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productApprovalsBody">
+                                <tr><td colspan="8" style="text-align:center;">Loading pending products...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="deliveryMonitoringView" style="display: none;">
+                    <h3 class="section-title">Real-time Delivery Monitoring</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Extracted Monitoring Logs</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Monitoring ID</th>
+                                    <th>Customer</th>
+                                    <th>Agent</th>
+                                    <th>Product</th>
+                                    <th>Status</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deliveryMonitoringBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading logs from database...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="paymentsView" style="display: none;">
+                    <h3 class="section-title">Payment Verification</h3>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Online Payment Requests (Razorpay)</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Amount</th>
+                                    <th>Transaction ID</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="onlinePaymentsBody">
+                                <tr><td colspan="7" style="text-align:center;">Loading online payments...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="chart-container" style="margin-top: 2rem;">
+                        <div class="chart-header">
+                            <div class="chart-title">Extracted Customer Payments</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Payment ID</th>
+                                    <th>Sender</th>
+                                    <th>Receiver</th>
+                                    <th>Amount</th>
+                                    <th>Mode</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customerPaymentsBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading customer payments...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="chart-container" style="margin-top: 2rem;">
+                        <div class="chart-header">
+                            <div class="chart-title">Extracted Transport Payouts</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Agent</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Requested On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transportPaymentsBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading transport payouts...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="farmerApprovalsView" style="display: none;">
+                    <h3 class="section-title">Farmer Registration Approvals</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Pending Records</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="farmerApprovalsBody">
+                                <tr><td colspan="6" style="text-align:center;">No pending records in database.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="settingsView" style="display: none;">
+                    <h3 class="section-title">Profile Settings</h3>
+                    <div class="registration-form">
+                        <div class="chart-title" style="margin-bottom: 1.5rem;">Extracted Admin Profile</div>
+                        <div id="settingsMessage" style="display:none;padding:0.75rem;border-radius:0.375rem;margin-bottom:1rem;"></div>
+                        <div class="form-group">
+                            <label for="settingsName">Name</label>
+                            <input type="text" id="settingsName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsEmail">Email</label>
+                            <input type="email" id="settingsEmail" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsPassword">Update PIN (4-digit)</label>
+                            <input type="password" id="settingsPassword" class="form-control" maxlength="4" placeholder="Enter new PIN">
+                        </div>
+                        <button class="submit-btn" onclick="updateAdminSettings()">Update Database Record</button>
+                    </div>
+                </div>
+
+                <div id="reportsView" style="display: none;">
+                    <h3 class="section-title">System Activity Audit</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Extracted Audit Trail</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Admin</th>
+                                    <th>Activity</th>
+                                    <th>Details</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityLogsBody">
+                                <tr><td colspan="4" style="text-align:center;">Loading logs from database...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="config.js"></script>
+    <script src="admin-shared.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

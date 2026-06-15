@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Boy Dashboard - Farm2Market</title>
+    <link rel="stylesheet" href="deliveryboy.css">
+    <link rel="stylesheet" href="chatbot.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div id="dashboard" class="deliveryboy-container">
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1><i data-lucide="truck"></i> <span>Delivery Panel</span></h1>
+            </div>
+            <div class="sidebar-menu">
+                <div class="sidebar-menu-item active" onclick="showView('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('pendingDeliveries')">
+                    <i data-lucide="package"></i>
+                    <span>Pending Deliveries</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('completedDeliveries')">
+                    <i data-lucide="check-circle"></i>
+                    <span>Completed Deliveries</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('earnings')">
+                    <i data-lucide="dollar-sign"></i>
+                    <span>Earnings</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('profile')">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="logout()">
+                    <i data-lucide="log-out"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+
+            <div class="header">
+                <div class="header-title">
+                    <h2 id="pageTitle">Delivery Dashboard</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="showNotifications()">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-badge" id="notifBadge" style="display:none;">0</span>
+                    </button>
+                    <div class="user-profile" onclick="showView('profile')">
+                        <div class="user-avatar" id="userAvatar">DA</div>
+                        <span id="userName">Delivery Agent</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+
+                <div id="dashboardView">
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statPendingCount">--</div>
+                                    <div class="stat-label">Pending Deliveries</div>
+                                </div>
+                                <div class="stat-icon pending">
+                                    <i data-lucide="package"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statTodayEarnings">₹0</div>
+                                    <div class="stat-label">Today's Earnings</div>
+                                </div>
+                                <div class="stat-icon earnings">
+                                    <i data-lucide="dollar-sign"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statCompletedToday">--</div>
+                                    <div class="stat-label">Completed Today</div>
+                                </div>
+                                <div class="stat-icon completed">
+                                    <i data-lucide="check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statRating">--</div>
+                                    <div class="stat-label">Rating</div>
+                                </div>
+                                <div class="stat-icon rating">
+                                    <i data-lucide="star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container" id="deliveryOffersContainer">
+                        <div class="chart-header">
+                            <div class="chart-title">New Delivery Offers</div>
+                            <button class="btn btn-sm btn-outline" onclick="loadDeliveryOffers()">
+                                <i data-lucide="refresh-cw"></i> Refresh
+                            </button>
+                        </div>
+                        <div id="deliveryOffersList" class="offers-list">
+                            <div class="loading-state">
+                                <p>Loading delivery offers...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Current Active Jobs</div>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Pickup From</th>
+                                        <th>Destination</th>
+                                        <th>Earnings</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashActiveJobs">
+                                    <tr><td colspan="6" style="text-align:center;color:#6b7280;">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pendingDeliveriesView" style="display: none;">
+                    <h3 class="section-title">Accepted & In-Transit Jobs</h3>
+                    <div class="chart-container">
+                        <div style="overflow-x:auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Accepted On</th>
+                                        <th>Pickup</th>
+                                        <th>Delivery Address</th>
+                                        <th>Distance</th>
+                                        <th>Earnings</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingJobsTable">
+                                    <tr><td colspan="8" style="text-align:center;color:#6b7280;">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="completedDeliveriesView" style="display: none;">
+                    <h3 class="section-title">Delivery History</h3>
+                    <div class="chart-container">
+                        <div style="overflow-x:auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Completed At</th>
+                                        <th>Earnings</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="completedJobsTable">
+                                    <tr><td colspan="5" style="text-align:center;color:#6b7280;">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="earningsView" style="display: none;">
+                    <h3 class="section-title">My Earnings</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Earnings</div>
+                            <div class="stat-value" id="totalEarnings">₹0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Earnings This Month</div>
+                            <div class="stat-value" id="monthlyEarnings">₹0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Total Deliveries</div>
+                            <div class="stat-value" id="totalDeliveries">0</div>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="margin-top: 2rem;">
+                        <div class="chart-header"><div class="chart-title">Earnings Breakdown</div></div>
+                        <div style="overflow-x:auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Deliveries</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="earningsBreakdown">
+                                    <tr><td colspan="3" style="text-align:center;color:#6b7280;">Loading earnings...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profileView" style="display: none;">
+                    <h3 class="section-title">My Profile</h3>
+                    <div class="registration-form" id="profileForm">
+                        <div id="profileMessage" style="display:none;padding:0.75rem;border-radius:0.375rem;margin-bottom:1rem;"></div>
+                        <div class="form-group">
+                            <label for="profileName">Full Name</label>
+                            <input type="text" id="profileName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhone">Phone Number</label>
+                            <input type="tel" id="profilePhone" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileVehicleType">Vehicle Type</label>
+                            <input type="text" id="profileVehicleType" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileVehicleNumber">Vehicle Number</label>
+                            <input type="text" id="profileVehicleNumber" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileRegion">Assigned Region</label>
+                            <input type="text" id="profileRegion" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileRating">My Rating</label>
+                            <input type="text" id="profileRating" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePassword">Change Password</label>
+                            <input type="password" id="profilePassword" class="form-control" placeholder="Leave blank to keep current">
+                        </div>
+                        <button class="submit-btn" onclick="saveProfile()">Update Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="deliveryboy.js"></script>
+    <script src="chatbot.js"></script>
+</body>
+</html>

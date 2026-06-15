@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold Storage Expert Dashboard - Farm2Market</title>
+    <link rel="stylesheet" href="corestorage.css">
+    <link rel="stylesheet" href="chatbot.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div id="dashboard" class="corestorage-container">
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1><i data-lucide="database"></i> <span>Cold Storage Panel</span></h1>
+            </div>
+            <div class="sidebar-menu">
+                <div class="sidebar-menu-item active" onclick="showView('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('inventory')">
+                    <i data-lucide="package"></i>
+                    <span>Crop Inventory</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('storageAreas')">
+                    <i data-lucide="warehouse"></i>
+                    <span>Storage Areas</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('qualityControl')">
+                    <i data-lucide="check-circle"></i>
+                    <span>Quality Control</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('reports')">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span>Reports</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showView('profile')">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="logout()">
+                    <i data-lucide="log-out"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+
+            <div class="header">
+                <div class="header-title">
+                    <h2 id="pageTitle">Cold Storage Dashboard</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="showNotifications()">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-badge" id="notifBadge" style="display:none;">0</span>
+                    </button>
+                    <div class="user-profile" onclick="showView('profile')">
+                        <div class="user-avatar" id="userAvatar">CS</div>
+                        <span id="userName">Storage Expert</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+
+                <div id="dashboardView">
+                    <div class="stats-grid" id="dashStats">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statTotalCrops">--</div>
+                                    <div class="stat-label">Total Crop Entries</div>
+                                </div>
+                                <div class="stat-icon items"><i data-lucide="package"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statUtilization">--%</div>
+                                    <div class="stat-label">Storage Utilization</div>
+                                </div>
+                                <div class="stat-icon value"><i data-lucide="trending-up"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statStorageUnits">--</div>
+                                    <div class="stat-label">Storage Areas</div>
+                                </div>
+                                <div class="stat-icon areas"><i data-lucide="warehouse"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statQuality">--%</div>
+                                    <div class="stat-label">Quality Score</div>
+                                </div>
+                                <div class="stat-icon quality"><i data-lucide="check-circle"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid" id="dashExtraStats" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <div class="stat-card stat-card-sm">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" style="font-size:1.5rem;" id="statAvgTemp">--°C</div>
+                                    <div class="stat-label">Avg Temperature</div>
+                                </div>
+                                <div class="stat-icon" style="background:#dbeafe;color:#3b82f6;"><i data-lucide="thermometer"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card-sm">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" style="font-size:1.5rem;" id="statAvgHumidity">--%</div>
+                                    <div class="stat-label">Avg Humidity</div>
+                                </div>
+                                <div class="stat-icon" style="background:#dcfce7;color:#16a34a;"><i data-lucide="droplets"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card-sm">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" style="font-size:1.5rem;" id="statTodayReports">--</div>
+                                    <div class="stat-label">Today's Reports</div>
+                                </div>
+                                <div class="stat-icon" style="background:#ede9fe;color:#7c3aed;"><i data-lucide="file-text"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Recent Crop Inventory Updates</div>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Badge ID</th>
+                                        <th>Crop Type</th>
+                                        <th>Farmer</th>
+                                        <th>Storage Unit</th>
+                                        <th>Status</th>
+                                        <th>Entry Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashRecentCrops">
+                                    <tr><td colspan="6" style="text-align:center;color:#6b7280;">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="inventoryView" style="display: none;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <h3 class="section-title" style="margin:0;">Crop Inventory Management</h3>
+                        <button class="btn btn-primary" onclick="showAddCropModal()"><i data-lucide="plus"></i> Add Crop Entry</button>
+                    </div>
+                    <div class="chart-container">
+                        <div style="overflow-x:auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Badge ID</th>
+                                        <th>Crop Type</th>
+                                        <th>Farmer</th>
+                                        <th>Storage Unit</th>
+                                        <th>Temp Req</th>
+                                        <th>Humidity Req</th>
+                                        <th>Shelf Life</th>
+                                        <th>Status</th>
+                                        <th>Entry Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventoryTable">
+                                    <tr><td colspan="10" style="text-align:center;color:#6b7280;">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="storageAreasView" style="display: none;">
+                    <h3 class="section-title">Storage Areas Overview</h3>
+                    <div id="storageAreasGrid" class="storage-areas-grid">
+                        <p style="text-align:center;color:#6b7280;">Loading storage areas...</p>
+                    </div>
+                </div>
+
+                <div id="qualityControlView" style="display: none;">
+                    <h3 class="section-title">Quality Control</h3>
+
+                    <div id="qualityUnitsGrid" class="stats-grid">
+                        <p style="text-align:center;color:#6b7280;grid-column:1/-1;">Loading quality data...</p>
+                    </div>
+
+                    <div class="chart-container" style="margin-top:2rem;">
+                        <div class="chart-header">
+                            <div class="chart-title">Crops At Risk (Approaching Shelf Life)</div>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Badge ID</th>
+                                        <th>Crop Type</th>
+                                        <th>Storage Unit</th>
+                                        <th>Days Stored</th>
+                                        <th>Shelf Life</th>
+                                        <th>Life Used</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="atRiskCropsTable">
+                                    <tr><td colspan="7" style="text-align:center;color:#6b7280;">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reportsView" style="display: none;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:1rem;">
+                        <h3 class="section-title" style="margin:0;">Cold Storage Reports</h3>
+                        <button class="btn btn-primary" onclick="showAddReportModal()"><i data-lucide="plus"></i> Submit New Report</button>
+                    </div>
+
+                    <div class="chart-container" style="margin-bottom:1.5rem;">
+                        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+                            <div>
+                                <label style="font-weight:500;margin-right:0.5rem;">Type:</label>
+                                <select id="reportTypeFilter" onchange="loadReports()" style="padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;">
+                                    <option value="">All</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-weight:500;margin-right:0.5rem;">From:</label>
+                                <input type="date" id="reportFromDate" onchange="loadReports()" style="padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;">
+                            </div>
+                            <div>
+                                <label style="font-weight:500;margin-right:0.5rem;">To:</label>
+                                <input type="date" id="reportToDate" onchange="loadReports()" style="padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div style="overflow-x:auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Storage Unit</th>
+                                        <th>Total Crops</th>
+                                        <th>Weight (kg)</th>
+                                        <th>Avg Temp</th>
+                                        <th>Avg Humidity</th>
+                                        <th>Spoiled</th>
+                                        <th>Energy (kWh)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportsTable">
+                                    <tr><td colspan="10" style="text-align:center;color:#6b7280;">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profileView" style="display: none;">
+                    <h3 class="section-title">My Profile</h3>
+                    <div class="registration-form" id="profileForm">
+                        <div id="profileMessage" style="display:none;padding:0.75rem;border-radius:0.375rem;margin-bottom:1rem;"></div>
+                        <div class="form-group">
+                            <label for="profileName">Full Name</label>
+                            <input type="text" id="profileName" class="form-control" placeholder="Loading...">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileEmail">Email</label>
+                            <input type="email" id="profileEmail" class="form-control" placeholder="Loading...">
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhone">Phone Number</label>
+                            <input type="tel" id="profilePhone" class="form-control" placeholder="Loading...">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileQualification">Qualification</label>
+                            <input type="text" id="profileQualification" class="form-control" placeholder="Loading...">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileExperience">Experience (Years)</label>
+                            <input type="text" id="profileExperience" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileRegion">Assigned Region</label>
+                            <input type="text" id="profileRegion" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePassword">Change Password</label>
+                            <input type="password" id="profilePassword" class="form-control" placeholder="Leave blank to keep current">
+                        </div>
+                        <button class="submit-btn" onclick="saveProfile()">Save Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addCropModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Crop Entry</h2>
+                <button class="close-btn" onclick="closeModal('addCropModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="addCropMessage" style="display:none;padding:0.75rem;border-radius:0.375rem;margin-bottom:1rem;"></div>
+
+                <div class="form-group">
+                    <label>Badge ID *</label>
+                    <input type="number" id="addCropBadgeId" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Farmer ID *</label>
+                    <input type="number" id="addCropFarmerId" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Crop Type *</label>
+                    <input type="text" id="addCropType" class="form-control" placeholder="e.g. Tomato, Potato">
+                </div>
+                <div class="form-group">
+                    <label>Required Temperature (°C)</label>
+                    <input type="number" step="0.1" id="addCropTemp" class="form-control" placeholder="e.g. 4.0">
+                </div>
+                <div class="form-group">
+                    <label>Required Humidity (%)</label>
+                    <input type="number" step="0.1" id="addCropHumidity" class="form-control" placeholder="e.g. 85.0">
+                </div>
+                <div class="form-group">
+                    <label>Shelf Life (Days)</label>
+                    <input type="number" id="addCropShelfLife" class="form-control" placeholder="e.g. 14">
+                </div>
+                <div class="form-group">
+                    <label>Storage Unit *</label>
+                    <select id="addCropStorageId" class="form-control">
+                        <option value="">Select storage unit</option>
+                    </select>
+                </div>
+                <button class="submit-btn" onclick="addCropEntry()">Add Crop Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addReportModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:600px;">
+            <div class="modal-header">
+                <h2>Submit Cold Storage Report</h2>
+                <button class="close-btn" onclick="closeModal('addReportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="addReportMessage" style="display:none;padding:0.75rem;border-radius:0.375rem;margin-bottom:1rem;"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;">
+                    <div class="form-group">
+                        <label>Storage Unit *</label>
+                        <select id="reportStorageId" class="form-control">
+                            <option value="">Select unit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Report Type *</label>
+                        <select id="reportReportType" class="form-control">
+                            <option value="daily">Daily</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Report Date *</label>
+                        <input type="date" id="reportReportDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Crops</label>
+                        <input type="number" id="reportTotalCrops" class="form-control" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Weight (kg)</label>
+                        <input type="number" step="0.01" id="reportTotalWeight" class="form-control" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Avg Temperature (°C)</label>
+                        <input type="number" step="0.01" id="reportAvgTemp" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Avg Humidity (%)</label>
+                        <input type="number" step="0.01" id="reportAvgHumidity" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Crops Spoiled</label>
+                        <input type="number" id="reportCropsSpoiled" class="form-control" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Energy Consumption (kWh)</label>
+                        <input type="number" step="0.01" id="reportEnergy" class="form-control" value="0">
+                    </div>
+                </div>
+                <button class="submit-btn" onclick="submitReport()">Submit Report</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="updateCropModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header">
+                <h2>Update Crop Status</h2>
+                <button class="close-btn" onclick="closeModal('updateCropModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="updateCropMessage" style="display:none;padding:0.75rem;border-radius:0.375rem;margin-bottom:1rem;"></div>
+                <input type="hidden" id="updateCropBadgeId">
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="updateCropStatus" class="form-control">
+                        <option value="stored">Stored</option>
+                        <option value="transported">Transported</option>
+                        <option value="spoiled">Spoiled</option>
+                        <option value="released">Released</option>
+                    </select>
+                </div>
+                <div class="form-group" id="transportTimeGroup" style="display:none;">
+                    <label>Transport Time</label>
+                    <input type="datetime-local" id="updateCropTransportTime" class="form-control">
+                </div>
+                <button class="submit-btn" onclick="updateCropStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmStorageModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Confirm Crop Storage</h2>
+                <button class="close-btn" onclick="closeModal('confirmStorageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="confirmStorageInfo" style="background: #f3f4f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+
+                </div>
+                <input type="hidden" id="originalBadgeId">
+                <input type="hidden" id="confirmFarmerId">
+                <input type="hidden" id="confirmEntryTime">
+                <input type="hidden" id="confirmCropType">
+                <div class="form-group">
+                    <label>Badge ID *</label>
+                    <input type="number" id="confirmBadgeId" class="form-control" placeholder="Enter Badge ID">
+                </div>
+                <div class="form-group">
+                    <label>Required Temperature (°C) *</label>
+                    <input type="number" id="confirmTemp" class="form-control" step="0.1" placeholder="e.g. 4.5">
+                </div>
+                <div class="form-group">
+                    <label>Required Humidity (%) *</label>
+                    <input type="number" id="confirmHumidity" class="form-control" step="1" placeholder="e.g. 85">
+                </div>
+                <div class="form-group">
+                    <label>Estimated Shelf Life (Days) *</label>
+                    <input type="number" id="confirmShelfLife" class="form-control" step="1" placeholder="e.g. 30">
+                </div>
+                <div id="confirmStorageMessage" style="display:none;padding:0.75rem;border-radius:0.375rem;margin-bottom:1rem;"></div>
+                <button class="submit-btn" onclick="submitConfirmStorage()">Confirm & Add to Inventory</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="corestorage.js"></script>
+    <script src="chatbot.js"></script>
+</body>
+</html>

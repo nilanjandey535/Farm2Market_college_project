@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard - Farm2Market</title>
+    <link rel="stylesheet" href="superadmin.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div id="dashboard" class="superadmin-container">
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1><i data-lucide="shield"></i> <span>Super Admin</span></h1>
+            </div>
+            <div class="sidebar-menu">
+                <div class="sidebar-menu-item active" onclick="showDashboard()">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showDeliveryMonitoring()">
+                    <i data-lucide="truck"></i>
+                    <span>Delivery Monitoring</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showPaymentRequests()">
+                    <i data-lucide="dollar-sign"></i>
+                    <span>Payment Requests</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showProductApprovals()">
+                    <i data-lucide="package"></i>
+                    <span>Product Approvals</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showPaymentVerification()">
+                    <i data-lucide="check-circle"></i>
+                    <span>Payment Verification</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showPermissionManagement()">
+                    <i data-lucide="lock"></i>
+                    <span>Permission Management</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showAdminManagement()">
+                    <i data-lucide="users"></i>
+                    <span>Admin Management</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showRegisterAdmin()">
+                    <i data-lucide="user-plus"></i>
+                    <span>Register Admin</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showRegisterAgriSpecialist()">
+                    <i data-lucide="leaf"></i>
+                    <span>Register Agri Specialist</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showRegisterDeliveryBoy()">
+                    <i data-lucide="truck"></i>
+                    <span>Register Delivery Boy</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showReports()">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span>Reports</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="showSettings()">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="sidebar-menu-item" onclick="logout()">
+                    <i data-lucide="log-out"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+
+            <div class="header">
+                <div class="header-title">
+                    <h2 id="pageTitle">Super Admin Dashboard</h2>
+                </div>
+                <div class="header-actions">
+                    <div class="user-profile" onclick="showProfile()">
+                        <div class="user-avatar" id="userAvatar">ND</div>
+                        <span id="userName">Super Admin</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+
+                <div id="dashboardView">
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statTotalAdmins">--</div>
+                                    <div class="stat-label">Total Admins</div>
+                                </div>
+                                <div class="stat-icon users">
+                                    <i data-lucide="users"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statTotalRevenue">--</div>
+                                    <div class="stat-label">Total Revenue</div>
+                                </div>
+                                <div class="stat-icon revenue">
+                                    <i data-lucide="dollar-sign"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statTotalOrders">--</div>
+                                    <div class="stat-label">Total Orders</div>
+                                </div>
+                                <div class="stat-icon orders">
+                                    <i data-lucide="shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="statAvgOrderValue">--</div>
+                                    <div class="stat-label">Avg. Order Value</div>
+                                </div>
+                                <div class="stat-icon sales">
+                                    <i data-lucide="trending-up"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="adminManagementView" style="display: none;">
+                    <h3 class="section-title">Admin Management</h3>
+                    <div class="admin-grid" id="adminGridContainer">
+                        <p style="text-align:center;width:100%;">Loading admins...</p>
+                    </div>
+                </div>
+
+                <div id="productApprovalsView" style="display: none;">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="section-title" style="margin: 0;">Product Quality Approval</h3>
+                    </div>
+                    <div class="chart-container" style="padding: 0; overflow: hidden;">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px;">ID</th>
+                                    <th>Product Details</th>
+                                    <th>Owner</th>
+                                    <th>Type</th>
+                                    <th>Pricing</th>
+                                    <th>Stock</th>
+                                    <th>Product Image</th>
+                                    <th style="text-align: right; padding-right: 2rem;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productApprovalsBody">
+                                <tr><td colspan="8" style="text-align:center; padding: 3rem;">Loading pending products...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="paymentRequestsView" style="display: none;">
+                    <h3 class="section-title">Approve Transport Payment Requests</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Pending Payment Requests</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>Transporter</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentRequestsBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading requests...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="deliveryMonitoringView" style="display: none;">
+                    <h3 class="section-title">Monitor Delivery Time and Conditions</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Recent Delivery Activity</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Agent</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deliveryMonitoringBody">
+                                <tr><td colspan="6" style="text-align:center;">Loading monitoring data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="registerDeliveryBoyView" style="display: none;">
+                    <h3 class="section-title">Register New Delivery Boy</h3>
+                    <div class="registration-form">
+                        <form id="deliveryBoyRegistrationForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="deliveryBoyFirstName">First Name</label>
+                                    <input type="text" id="deliveryBoyFirstName" class="form-control" placeholder="Enter first name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deliveryBoyLastName">Last Name</label>
+                                    <input type="text" id="deliveryBoyLastName" class="form-control" placeholder="Enter last name" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="deliveryBoyEmail">Email Address</label>
+                                <input type="email" id="deliveryBoyEmail" class="form-control" placeholder="Enter email address" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="deliveryBoyPhone">Phone Number</label>
+                                    <input type="tel" id="deliveryBoyPhone" class="form-control" placeholder="Enter phone number" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deliveryBoyVehicle">Vehicle Type</label>
+                                    <select id="deliveryBoyVehicle" class="form-control" required>
+                                        <option value="">Select vehicle type</option>
+                                        <option value="motorcycle">Motorcycle</option>
+                                        <option value="van">Van</option>
+                                        <option value="truck">Truck</option>
+                                        <option value="bicycle">Bicycle</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="deliveryBoyPassword">Password</label>
+                                    <input type="password" id="deliveryBoyPassword" class="form-control" placeholder="Enter password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deliveryBoyConfirmPassword">Confirm Password</label>
+                                    <input type="password" id="deliveryBoyConfirmPassword" class="form-control" placeholder="Confirm password" required>
+                                </div>
+                            </div>
+
+                            <h4 class="section-title">Address Details</h4>
+                            <div class="form-group">
+                                <label for="deliveryBoyVillage">Village</label>
+                                <input type="text" id="deliveryBoyVillage" class="form-control" placeholder="Enter village name" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="deliveryBoyPoliceStation">Police Station</label>
+                                    <input type="text" id="deliveryBoyPoliceStation" class="form-control" placeholder="Enter police station name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deliveryBoyPinCode">PIN Code</label>
+                                    <input type="text" id="deliveryBoyPinCode" class="form-control" placeholder="Enter PIN code" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="deliveryBoyDistrict">District</label>
+                                    <input type="text" id="deliveryBoyDistrict" class="form-control" placeholder="Enter district name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deliveryBoyState">State</label>
+                                    <input type="text" id="deliveryBoyState" class="form-control" placeholder="Enter state name" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn">Register Delivery Boy</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="registerAdminView" style="display: none;">
+                    <h3 class="section-title">Register New Admin</h3>
+                    <div id="superAdminWarning" class="alert alert-warning" style="display: none; margin-bottom: 20px; padding: 15px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 5px; color: #856404;">
+                        <strong>Note:</strong> No super admin account exists. You can create one now.
+                    </div>
+                    <div class="registration-form">
+                        <form id="adminRegistrationForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">First Name <span style="color: red;">*</span></label>
+                                    <input type="text" id="firstName" class="form-control" placeholder="Enter first name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name <span style="color: red;">*</span></label>
+                                    <input type="text" id="lastName" class="form-control" placeholder="Enter last name" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminEmail">Email Address <span style="color: red;">*</span></label>
+                                <input type="email" id="adminEmail" class="form-control" placeholder="Enter email address" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number <span style="color: red;">*</span></label>
+                                    <input type="tel" id="phone" class="form-control" placeholder="Enter phone number" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="role">Role <span style="color: red;">*</span></label>
+                                    <select id="role" class="form-control" required>
+                                        <option value="">Select role</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="super_admin" id="superAdminOption">Super Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <input type="text" id="department" class="form-control" placeholder="Enter department (optional)">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="adminPassword">Password (4-digit PIN) <span style="color: red;">*</span></label>
+                                    <input type="password" id="adminPassword" class="form-control" placeholder="Enter 4-digit PIN" maxlength="4" pattern="[0-9]{4}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm Password <span style="color: red;">*</span></label>
+                                    <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm 4-digit PIN" maxlength="4" pattern="[0-9]{4}" required>
+                                </div>
+                            </div>
+                            <div id="formMessage" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px;"></div>
+                            <button type="submit" class="submit-btn">Register Admin</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="registerAgriSpecialistView" style="display: none;">
+                    <h3 class="section-title">Register New Agri Specialist</h3>
+                    <div class="registration-form">
+                        <form id="agriSpecialistRegistrationForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="agriSpecFullname">Full Name <span style="color: red;">*</span></label>
+                                    <input type="text" id="agriSpecFullname" class="form-control" placeholder="Enter full name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="agriSpecEmail">Email Address <span style="color: red;">*</span></label>
+                                    <input type="email" id="agriSpecEmail" class="form-control" placeholder="Enter email address" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="agriSpecPhone">Phone Number <span style="color: red;">*</span></label>
+                                    <input type="tel" id="agriSpecPhone" class="form-control" placeholder="Enter phone number" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="agriSpecQualification">Qualification</label>
+                                    <input type="text" id="agriSpecQualification" class="form-control" placeholder="e.g. M.Sc Agriculture">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="agriSpecExperience">Experience (Years)</label>
+                                    <input type="number" id="agriSpecExperience" class="form-control" placeholder="e.g. 5" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="agriSpecRegion">Assigned Region</label>
+                                    <input type="text" id="agriSpecRegion" class="form-control" placeholder="e.g. North India">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="agriSpecStorageLocation">Storage Location ID</label>
+                                <input type="number" id="agriSpecStorageLocation" class="form-control" placeholder="Enter storage location ID (optional)">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="agriSpecPassword">Password <span style="color: red;">*</span></label>
+                                    <input type="password" id="agriSpecPassword" class="form-control" placeholder="Enter password (min 4 chars)" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="agriSpecConfirmPassword">Confirm Password <span style="color: red;">*</span></label>
+                                    <input type="password" id="agriSpecConfirmPassword" class="form-control" placeholder="Confirm password" required>
+                                </div>
+                            </div>
+                            <div id="agriSpecFormMessage" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px;"></div>
+                            <button type="submit" class="submit-btn">Register Agri Specialist</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="reportsView" style="display: none;">
+                    <div class="flex justify-between items-center mb-6" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                        <h3 class="section-title" style="margin: 0;">Cold Storage Reports</h3>
+                        <button class="btn btn-outline" onclick="loadColdStorageReports()">
+                            <i data-lucide="refresh-cw"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="chart-container" style="margin-bottom: 1.5rem;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="csrReportTypeFilter">Report Type</label>
+                                <select id="csrReportTypeFilter" class="form-control" onchange="loadColdStorageReports()">
+                                    <option value="">All Types</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="csrFromDate">From Date</label>
+                                <input type="date" id="csrFromDate" class="form-control" onchange="loadColdStorageReports()">
+                            </div>
+                            <div class="form-group">
+                                <label for="csrToDate">To Date</label>
+                                <input type="date" id="csrToDate" class="form-control" onchange="loadColdStorageReports()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">All Cold Storage Reports</div>
+                            <div id="csrReportCount" style="font-size: 0.875rem; color: #6b7280;">Loading...</div>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Report ID</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Storage Unit</th>
+                                        <th>Region</th>
+                                        <th>Specialist</th>
+                                        <th>Crops</th>
+                                        <th>Weight (kg)</th>
+                                        <th>Avg Temp</th>
+                                        <th>Avg Humidity</th>
+                                        <th>Spoiled</th>
+                                        <th>Energy (kWh)</th>
+                                        <th>Status</th>
+                                        <th>Submitted</th>
+                                        <th style="text-align: right;">Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="coldStorageReportsBody">
+                                    <tr><td colspan="15" style="text-align:center;">Loading cold storage reports...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="csrDetailModal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
+                        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h2 id="csrDetailTitle" style="margin: 0;">Report Details</h2>
+                            <button type="button" class="btn btn-outline" onclick="closeCsrDetailModal()">Close</button>
+                        </div>
+                        <div id="csrDetailBody"></div>
+                    </div>
+                </div>
+
+                <div id="settingsView" style="display: none;">
+                    <h3 class="section-title">Settings</h3>
+                    <div class="registration-form">
+                        <div class="form-group">
+                            <label for="siteName">Site Name</label>
+                            <input type="text" id="siteName" class="form-control" value="Farm2Market">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminEmailSettings">Admin Email</label>
+                            <input type="email" id="adminEmailSettings" class="form-control" value="admin@farm2market.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="notificationEmail">Notification Email</label>
+                            <input type="email" id="notificationEmail" class="form-control" value="notifications@farm2market.com">
+                        </div>
+                        <button class="submit-btn" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </div>
+
+                <div id="paymentVerificationView" style="display: none;">
+                    <h3 class="section-title">Online Payment Verification (Razorpay)</h3>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Customer Online Transactions</div>
+                        </div>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Amount</th>
+                                    <th>Transaction ID</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="onlinePaymentsBody">
+                                <tr><td colspan="7" style="text-align:center;">Loading online payments...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="permissionManagementView" style="display: none;">
+                    <h3 class="section-title">Assign and Manage Role-Based Permissions</h3>
+                    <div class="chart-container">
+                        <div class="form-group">
+                            <label for="permissionRole">Select Role</label>
+                            <select id="permissionRole" class="form-control">
+                                <option value="">Select a role</option>
+                                <option value="admin">Admin</option>
+                                <option value="farmer">Farmer</option>
+                                <option value="delivery">Delivery Boy</option>
+                                <option value="specialist">Specialist</option>
+                            </select>
+                        </div>
+                        <div class="permission-grid">
+                            <div class="permission-item">
+                                <label><input type="checkbox" id="perm_can_add"> Can Add</label>
+                            </div>
+                            <div class="permission-item">
+                                <label><input type="checkbox" id="perm_can_edit"> Can Edit</label>
+                            </div>
+                            <div class="permission-item">
+                                <label><input type="checkbox" id="perm_can_delete"> Can Delete</label>
+                            </div>
+                            <div class="permission-item">
+                                <label><input type="checkbox" id="perm_can_view" checked> Can View</label>
+                            </div>
+                            <div class="permission-item">
+                                <label><input type="checkbox" id="perm_can_reports"> Can Generate Reports</label>
+                            </div>
+                            <div class="permission-item">
+                                <label><input type="checkbox" id="perm_can_users"> Can Manage Users</label>
+                            </div>
+                        </div>
+                        <button class="submit-btn" onclick="savePermissions()">Save Permissions</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="config.js"></script>
+    <script src="admin-shared.js"></script>
+    <script src="superadmin.js"></script>
+</body>
+</html>

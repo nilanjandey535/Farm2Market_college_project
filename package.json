@@ -1,0 +1,28 @@
+{
+  "name": "farm2market-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "better-sqlite3": "^9.6.0",
+    "uuid": "^9.0.1"
+  }
+}
+
+
+
+
+
+
+
+
+
+

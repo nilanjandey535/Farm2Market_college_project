@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script>
+        (function () {
+            try {
+                if (!localStorage.getItem('user_id') || !localStorage.getItem('role')) {
+                    window.location.replace('home.html');
+                }
+            } catch (e) { /* ignore private mode / storage errors */ }
+        })();
+    </script>
+    <title>Farm2Market - Connecting Farmers with Consumers</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="chatbot.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="app" class="min-h-screen flex flex-col">
+
+        <header id="header" class="header"></header>
+
+        <div id="checkoutStepper" class="checkout-stepper" style="display: none;"></div>
+
+        <main id="mainContent" class="flex-1">
+
+        </main>
+
+        <footer id="footer" class="footer"></footer>
+
+        <div id="cartSidebar" class="cart-sidebar"></div>
+        <div id="profileModal" class="modal"></div>
+        <div id="accountSettings" class="modal"></div>
+        <div id="addProductModal" class="modal"></div>
+        <div id="editProductModal" class="modal"></div>
+        <div id="addAddressModal" class="modal"></div>
+        <div id="languageSelector" class="modal"></div>
+        <div id="productDetailsModal" class="modal"></div>
+
+        <div id="toastContainer" class="toast-container"></div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script src="components.js"></script>
+    <script src="about.js"></script>
+    <script src="chatbot.js"></script>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

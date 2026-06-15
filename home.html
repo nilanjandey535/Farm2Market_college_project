@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm2Market - Login & Registration</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .auth-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Left Section - Branding Panel */
+        .auth-panel {
+            width: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            overflow: hidden;
+            transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .auth-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        /* When in register mode, panel slides to right side (50% from left = right side) */
+        .auth-container.register-mode .auth-panel {
+            left: 50%;
+        }
+
+        .auth-panel-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+            transition: opacity 0.4s ease;
+        }
+
+        .auth-panel.fade-text .auth-panel-content {
+            opacity: 0;
+        }
+
+        .auth-panel h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: -2px;
+            transition: opacity 0.3s ease;
+        }
+
+        .auth-panel p {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            margin-top: 1.5rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .auth-panel .switch-link {
+            margin-top: 2rem;
+            padding: 0.75rem 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: inline-block;
+        }
+
+        .auth-panel .switch-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Right Section - Forms */
+        .auth-right {
+            width: 50%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+        }
+
+        /* When in register mode, form panel moves to left side */
+        .auth-container.register-mode .auth-right {
+            left: 0;
+        }
+
+        .auth-form-wrapper {
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .auth-form-container {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .auth-form-container.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .success-message-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .auth-panel,
+            .auth-right {
+                width: 100%;
+            }
+
+            .auth-panel {
+                height: 50vh;
+                left: 0 !important;
+                transition: top 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .auth-right {
+                top: 50vh;
+                height: 50vh;
+                left: 0 !important;
+                transition: top 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .auth-panel h1 {
+                font-size: 2.5rem;
+            }
+
+            .auth-container.register-mode .auth-panel {
+                top: 50vh;
+            }
+
+            .auth-container.register-mode .auth-right {
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container" id="authContainer">
+
+        <div class="auth-panel" id="authPanel">
+            <div class="auth-panel-content">
+                <h1 id="panelTitle">Login</h1>
+                <p id="panelSubtitle">Welcome back! Please login to your account.</p>
+                <button class="switch-link" id="switchLink" onclick="switchMode()">
+                    <span id="switchText">Don't have an account? Register</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="auth-right">
+            <div class="auth-form-wrapper">
+
+                <div class="auth-form-container active" id="loginFormContainer"></div>
+
+                <div class="auth-form-container" id="registerFormContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="data.js"></script>
+    <script src="components.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let isLoginMode = true;
+
+        // Initialize AppState for home page
+        if (typeof AppState === 'undefined') {
+            window.AppState = {
+                isLoggedIn: false,
+                showLoginModal: false,
+                showRegisterModal: false,
+                userType: 'customer',
+                language: 'en',
+                theme: 'light'
+            };
+        }
+
+        // Render forms using components.js helpers (no modal popups)
+        function renderForms() {
+            if (typeof handleLoginModal === 'function') {
+                handleLoginModal('loginFormContainer');
+            }
+            if (typeof handleRegisterModal === 'function') {
+                handleRegisterModal('registerFormContainer');
+            }
+        }
+
+        function switchMode() {
+            const authContainer = document.getElementById('authContainer');
+            const authPanel = document.getElementById('authPanel');
+            const panelTitle = document.getElementById('panelTitle');
+            const panelSubtitle = document.getElementById('panelSubtitle');
+            const switchText = document.getElementById('switchText');
+            const loginContainer = document.getElementById('loginFormContainer');
+            const registerContainer = document.getElementById('registerFormContainer');
+
+            isLoginMode = !isLoginMode;
+
+            // Fade out panel text
+            authPanel.classList.add('fade-text');
+
+            // After text fades, update content and switch panel position
+            setTimeout(() => {
+                if (isLoginMode) {
+                    panelTitle.textContent = 'Login';
+                    panelSubtitle.textContent = 'Welcome back! Please login to your account.';
+                    switchText.textContent = "Don't have an account? Register";
+                    authContainer.classList.remove('register-mode');
+                } else {
+                    panelTitle.textContent = 'Registration';
+                    panelSubtitle.textContent = 'Join us today! Create your account.';
+                    switchText.textContent = 'Already have an account? Login';
+                    authContainer.classList.add('register-mode');
+                }
+
+                // Fade in panel text
+                authPanel.classList.remove('fade-text');
+
+                // Fade forms
+                if (isLoginMode) {
+                    registerContainer.classList.remove('active');
+                    setTimeout(() => {
+                        loginContainer.classList.add('active');
+                    }, 300);
+                } else {
+                    loginContainer.classList.remove('active');
+                    setTimeout(() => {
+                        registerContainer.classList.add('active');
+                    }, 300);
+                }
+            }, 400);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderForms();
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>
